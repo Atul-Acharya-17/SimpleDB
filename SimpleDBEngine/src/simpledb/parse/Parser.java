@@ -40,8 +40,6 @@ public class Parser {
       Expression lhs = expression();
       String op = lex.eatOperator();
       Expression rhs = expression();
-      System.out.println(lhs.toString());
-      System.out.println(rhs.toString());
       return new Term(lhs, rhs, op);
    }
    
@@ -242,7 +240,26 @@ public class Parser {
       lex.eatDelim('(');
       String fldname = field();
       lex.eatDelim(')');
-      return new CreateIndexData(idxname, tblname, fldname);
+      
+      lex.eatKeyword("using");
+      
+      String indexType;
+      
+      if (lex.matchKeyword("btree")) {
+    	  indexType = "btree";
+    	  lex.eatKeyword("btree");
+      }
+      
+      else if (lex.matchKeyword("hash")) {
+    	  indexType = "hash";
+    	  lex.eatKeyword("hash");
+      }
+      
+      else {
+    	  throw new BadSyntaxException();
+      }
+      
+      return new CreateIndexData(idxname, tblname, fldname, indexType);
    }
 }
 
