@@ -23,10 +23,17 @@ public class SortPlan implements Plan {
     * @param tx the calling transaction
     */
    public SortPlan(Transaction tx, Plan p, List<String> sortfields) {
+	      this.tx = tx;
+	      this.p = p;
+	      sch = p.schema();
+	      comp = new RecordComparator(sortfields);
+	   }
+   
+   public SortPlan(Transaction tx, Plan p, List<String> sortfields, List<String> sortorder) {
       this.tx = tx;
       this.p = p;
       sch = p.schema();
-      comp = new RecordComparator(sortfields);
+      comp = new RecordComparator(sortfields, sortorder);
    }
    
    /**
