@@ -156,4 +156,12 @@ public class Term {
    public String toString() {
       return lhs.toString() + this.operator + rhs.toString();
    }
+   
+   public String getLHSFieldName() {
+	   return lhs.asFieldName();
+   }
+   
+   public String getRHSFieldName() {
+	   return rhs.asFieldName();
+   }
 }
