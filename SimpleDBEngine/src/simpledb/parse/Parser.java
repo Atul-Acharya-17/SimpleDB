@@ -2,6 +2,12 @@ package simpledb.parse;
 
 import java.util.*;
 
+import simpledb.materialize.AggregationFn;
+import simpledb.materialize.AvgFn;
+import simpledb.materialize.CountFn;
+import simpledb.materialize.MaxFn;
+import simpledb.materialize.MinFn;
+import simpledb.materialize.SumFn;
 import simpledb.query.*;
 import simpledb.record.*;
 
@@ -19,7 +25,68 @@ public class Parser {
 // Methods for parsing predicates, terms, expressions, constants, and fields
    
    public String field() {
-      return lex.eatId();
+	   
+	  if (lex.matchId())
+		return lex.eatId();
+	  
+	  else {
+		  String aggfn = "";
+		  List<String> aggfuncs = Arrays.asList("count", "max", "min", "avg", "sum");
+		  for (String f: aggfuncs) {
+			  if (lex.matchKeyword(f)) {
+				  aggfn += f;
+				  aggfn += "(";
+				  lex.eatKeyword(f);
+				  lex.eatDelim('(');
+				  
+				  String fieldname = lex.eatId();
+				  aggfn += fieldname;
+				  aggfn += ")";
+				  lex.eatDelim(')');
+				  
+				  System.out.println(aggfn);
+				  return aggfn;
+			  }
+		  }
+		  // Throws Error
+		  return lex.eatId();
+	  }
+   }
+   
+   public AggregationFn aggFn(String f) {
+	   List<String> aggfuncs = Arrays.asList("count", "max", "min", "avg", "sum");
+	   String parsed[] = f.split("\\(");
+	   for (String fn : aggfuncs) {
+		   if (parsed[0].equals(fn)) {
+			  AggregationFn func = null;
+			  
+			  String fieldname = parsed[1].split("\\)")[0];
+			  System.out.println("Field: " + fieldname);
+			  
+			  if (fn.equals("count")) {
+				  func = new CountFn(fieldname);
+			  }
+			  
+			  else if (fn.equals("max")) {
+				  func = new MaxFn(fieldname);
+			  }
+			  
+			  else if (fn.equals("min")) {
+				  func = new MinFn(fieldname);
+			  }
+			  
+			  else if (fn.equals("avg")) {
+				  func = new AvgFn(fieldname);
+			  }
+			  
+			  else if (fn.equals("sum")) {
+				  func = new SumFn(fieldname);
+			  }
+			  
+			  return func;
+		   }
+	   }
+	   return null;
    }
    
    public Constant constant() {
@@ -57,6 +124,24 @@ public class Parser {
    public QueryData query() {
       lex.eatKeyword("select");
       List<String> fields = selectList();
+      
+      // Get AggFns
+      List<AggregationFn> aggfn = new ArrayList<AggregationFn>();
+      for (int i=0; i<fields.size(); ++i) {
+    	  if (!fields.get(i).contains("(") || !fields.get(i).contains(")"))
+    		  continue;
+    	  AggregationFn agfn = aggFn(fields.get(i));
+		  String parsedField = fields.get(i).split("\\(")[1].split("\\)")[0];
+		  fields.set(i, parsedField);
+    	  if (agfn != null) {
+    		  aggfn.add(agfn);
+    		  // Need to be careful here
+    		  //fields.remove(f);
+    	  }
+      }
+      
+      System.out.println(fields.get(0));
+      
       lex.eatKeyword("from");
       Collection<String> tables = tableList();
       Predicate pred = new Predicate();
@@ -65,9 +150,26 @@ public class Parser {
          pred = predicate();
       }
       
+      List<String> groupByFields = new ArrayList<String>();
+      
+      // Group By
+      if (lex.matchKeyword("group")) {
+    	  lex.eatKeyword("group");
+    	  if (lex.matchKeyword("by")) {
+    		  lex.eatKeyword("by");
+    		  String field;
+    		  while (lex.matchId()) {
+    			  field = lex.eatId();
+    			  groupByFields.add(field);
+    			  if (lex.matchDelim(','))
+    				  lex.eatDelim(',');
+    			  else break;  
+    		  }
+    	  }
+      }
+      
       List<String> sortFields = new ArrayList<String>();
       List<String> sortOrder = new ArrayList<String>();
-      
       // Order By
       if (lex.matchKeyword("order")) {
     	  lex.eatKeyword("order");
@@ -102,7 +204,8 @@ public class Parser {
     	  }
       }
       
-      return new QueryData(fields, tables, pred, sortFields, sortOrder);
+      System.out.println("End of parser");
+      return new QueryData(fields, tables, pred, sortFields, sortOrder, groupByFields, aggfn);
    }
    
    private List<String> selectList() {
