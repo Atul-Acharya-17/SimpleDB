@@ -117,6 +117,12 @@ public class Transaction {
       return buff.contents().getInt(offset);
    }
    
+   public double getDouble(BlockId blk, int offset) {
+      concurMgr.sLock(blk);
+      Buffer buff = mybuffers.getBuffer(blk);
+      return buff.contents().getDouble(offset);
+   }
+   
    /**
     * Return the string value stored at the
     * specified offset of the specified block.
@@ -155,6 +161,18 @@ public class Transaction {
       p.setInt(offset, val);
       buff.setModified(txnum, lsn);
    }
+   
+   public void setDouble(BlockId blk, int offset, double val, boolean okToLog) {
+      concurMgr.xLock(blk);
+      Buffer buff = mybuffers.getBuffer(blk);
+      int lsn = -1;
+      if (okToLog)
+         lsn = recoveryMgr.setDouble(buff, offset, val);
+      Page p = buff.contents();
+      p.setDouble(offset, val);
+      buff.setModified(txnum, lsn);
+   }
+	   
    
    /**
     * Store a string at the specified offset 

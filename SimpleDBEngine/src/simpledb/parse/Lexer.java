@@ -41,7 +41,16 @@ public class Lexer {
     * @return true if the current token is an integer
     */
    public boolean matchIntConstant() {
-      return tok.ttype == StreamTokenizer.TT_NUMBER;
+	  double d = tok.nval;
+      return tok.ttype == StreamTokenizer.TT_NUMBER && (d == Math.floor(d));
+   }
+   
+   public boolean matchDoubleConstant() {
+	   //double d = tok.nval;
+//	   System.out.println("Checking double value");
+//	   System.out.println(d == Math.floor(d));
+//	   System.out.println(d);
+	   return tok.ttype == StreamTokenizer.TT_NUMBER;
    }
    
    /**
@@ -137,6 +146,17 @@ public class Lexer {
       return i;
    }
    
+   public double eatDoubleConstant() {
+      if (!matchDoubleConstant())
+          throw new BadSyntaxException();
+       double d = (double) tok.nval;
+//       if (d == Math.floor(d)) {
+//    	   throw new BadSyntaxException();
+//       }
+       nextToken();
+       return d;
+   }
+   
    /**
     * Throws an exception if the current token is not 
     * a string. 
@@ -188,9 +208,9 @@ public class Lexer {
    }
    
    private void initKeywords() {
-      keywords = Arrays.asList("select", "from", "where", "and",
+      keywords = Arrays.asList("select", "from", "where", "and", "distinct",
                                "insert", "into", "values", "delete", "update", "set", 
                                "create", "table", "int", "varchar", "view", "as", "index", "on",
-                               "using", "btree", "hash", "order", "by", "asc", "desc");
+                               "using", "btree", "hash", "order", "by", "asc", "desc", "group", "count", "max", "min", "avg", "sum");
    }
 }

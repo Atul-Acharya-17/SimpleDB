@@ -24,6 +24,14 @@ public class Page {
    public void setInt(int offset, int n) {
       bb.putInt(offset, n);
    }
+   
+   public double getDouble(int offset) {
+      return bb.getDouble(offset);
+   }
+
+   public void setDouble(int offset, double n) {
+      bb.putDouble(offset, n);
+   }
 
    public byte[] getBytes(int offset) {
       bb.position(offset);

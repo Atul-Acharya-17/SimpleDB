@@ -29,6 +29,8 @@ public interface AggregationFn {
     */
    String fieldName();
    
+   String originalFldName();
+   
    /**
     * Return the computed aggregation value.
     * @return the computed aggregation value

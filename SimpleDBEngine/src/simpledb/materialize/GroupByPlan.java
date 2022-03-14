@@ -5,6 +5,10 @@ import simpledb.tx.Transaction;
 import simpledb.record.Schema;
 import simpledb.plan.Plan;
 import simpledb.query.*;
+import static java.sql.Types.INTEGER;
+import static java.sql.Types.VARCHAR;
+import static java.sql.Types.DOUBLE;;
+
 
 /**
  * The Plan class for the <i>groupby</i> operator.
@@ -31,10 +35,33 @@ public class GroupByPlan implements Plan {
       this.p = new SortPlan(tx, p, groupfields);
       this.groupfields = groupfields;
       this.aggfns = aggfns;
+
       for (String fldname : groupfields)
          sch.add(fldname, p.schema());
-      for (AggregationFn fn : aggfns)
-         sch.addIntField(fn.fieldName());
+      for (AggregationFn fn : aggfns) {
+
+    	  String field = fn.originalFldName();
+    	  System.out.println(p.schema().type(field));
+    	  
+    	  // ID: 12 is String type
+    	  if ((fn.fieldName().contains("min") || fn.fieldName().contains("max") )
+    			  && p.schema().type(field) == VARCHAR) {
+    		  sch.addStringField(fn.fieldName(), p.schema().length(field));
+    	  }
+    	  
+    	  else if ((fn.fieldName().contains("avg"))) {
+    		  sch.addDoubleField(fn.fieldName());
+    	  }
+    	  // DOUBLE is 8
+    	  else if (p.schema().type(field) == DOUBLE && !fn.fieldName().contains("count")) {
+    		  sch.addDoubleField(fn.fieldName());
+    	  }
+
+    	  else {
+    		  sch.addIntField(fn.fieldName());
+    	  }
+      }
+         
    }
    
    /**

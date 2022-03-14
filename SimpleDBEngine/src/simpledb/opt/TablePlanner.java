@@ -1,11 +1,13 @@
 package simpledb.opt;
 
+import java.util.List;
 import java.util.Map;
 import simpledb.tx.Transaction;
 import simpledb.record.*;
 import simpledb.query.*;
 import simpledb.metadata.*;
 import simpledb.index.planner.*;
+import simpledb.materialize.MergeJoinPlan;
 import simpledb.multibuffer.MultibufferProductPlan;
 import simpledb.plan.*;
 
@@ -62,11 +64,15 @@ class TablePlanner {
    public Plan makeJoinPlan(Plan current) {
       Schema currsch = current.schema();
       Predicate joinpred = mypred.joinSubPred(myschema, currsch);
-      if (joinpred == null)
+      if (joinpred == null) {
+    	 System.out.println("Null JoinPred");
          return null;
+      }
       Plan p = makeIndexJoin(current, currsch);
       if (p == null)
-         p = makeProductJoin(current, currsch);
+         p = makeSortMergeJoin(current, currsch, joinpred);
+      if (p == null)
+    	  p = makeProductJoin(current, currsch);
       return p;
    }
    
@@ -104,6 +110,23 @@ class TablePlanner {
          }
       }
       return null;
+   }
+   
+   private Plan makeSortMergeJoin(Plan current, Schema currsch, Predicate joinPred) {
+	   List<Term> term = joinPred.getTerms();
+	   
+	   if (term.size() > 0) {
+		   String lhs = term.get(0).getLHSFieldName();
+		   String rhs = term.get(0).getRHSFieldName();
+		   Plan p;
+		   if (currsch.hasField(lhs))
+			   p = new MergeJoinPlan(tx, current, myplan, lhs, rhs);
+		   else
+			   p = new MergeJoinPlan(tx, current, myplan, rhs, lhs);
+		   p = addSelectPred(p);
+		   return addJoinPred(p, currsch);
+	   }
+	   return null;
    }
    
    private Plan makeProductJoin(Plan current, Schema currsch) {

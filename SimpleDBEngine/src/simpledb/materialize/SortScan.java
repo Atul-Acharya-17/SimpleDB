@@ -120,6 +120,10 @@ public class SortScan implements Scan {
       return currentscan.getString(fldname);
    }
    
+   public double getDouble(String fldname) {
+	      return currentscan.getDouble(fldname);
+	   }
+   
    /**
     * Return true if the specified field is in the current scan.
     * @see simpledb.query.Scan#hasField(java.lang.String)

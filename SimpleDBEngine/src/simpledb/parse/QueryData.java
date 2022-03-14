@@ -2,6 +2,7 @@ package simpledb.parse;
 
 import java.util.*;
 
+import simpledb.materialize.AggregationFn;
 import simpledb.query.*;
 
 /**
@@ -14,16 +15,22 @@ public class QueryData {
    private Predicate pred;
    private List<String> sortfields;
    private List<String> sortorder;
-   
+   private List<String> groupbyfields;
+   private List<AggregationFn> aggregationfuncs;
+   private boolean distinct;
    /**
     * Saves the field and table list and predicate.
     */
-   public QueryData(List<String> fields, Collection<String> tables, Predicate pred, List<String>sortfields, List<String>sortorder) {
+   public QueryData(List<String> fields, Collection<String> tables, Predicate pred, List<String>sortfields, List<String>sortorder,
+		   List<String> groupByFields, List<AggregationFn> aggregationFuncs, boolean distinct) {
       this.fields = fields;
       this.tables = tables;
       this.pred = pred;
       this.sortfields = sortfields;
       this.sortorder = sortorder;
+      this.groupbyfields = groupByFields;
+      this.aggregationfuncs = aggregationFuncs;
+      this.distinct = distinct;
    }
    
    /**
@@ -50,6 +57,17 @@ public class QueryData {
 	   return sortorder;
    }
    
+   public List<String> groupByFields(){
+	   return groupbyfields;
+   }
+   
+   public List<AggregationFn> aggregationFuncs(){
+	   return aggregationfuncs;
+   }
+   
+   public boolean Distinct() {
+	   return distinct;
+   }
    /**
     * Returns the predicate that describes which
     * records should be in the output table.

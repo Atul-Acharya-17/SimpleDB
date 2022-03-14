@@ -48,6 +48,7 @@ public class Term {
    public boolean isSatisfied(Scan s) {
       Constant lhsval = lhs.evaluate(s);
       Constant rhsval = rhs.evaluate(s);
+      
       int result = lhsval.compareTo(rhsval);
       if (this.operator.equals("=")) {
     	  return result == 0;
@@ -155,5 +156,13 @@ public class Term {
    
    public String toString() {
       return lhs.toString() + this.operator + rhs.toString();
+   }
+   
+   public String getLHSFieldName() {
+	   return lhs.asFieldName();
+   }
+   
+   public String getRHSFieldName() {
+	   return rhs.asFieldName();
    }
 }

@@ -21,6 +21,9 @@ public class RecordComparator implements Comparator<Scan> {
    public RecordComparator(List<String> fields) {
 	      this.fields = fields;
 	      this.order = new ArrayList<String>();
+	      for (int i=0; i<fields.size(); ++i) {
+	    	  this.order.add("asc");
+	      }
 	   }
    
    public RecordComparator(List<String> fields, List<String> order) {

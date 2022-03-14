@@ -1,6 +1,7 @@
 package simpledb.record;
 
 import static java.sql.Types.INTEGER;
+import static java.sql.Types.DOUBLE;
 import simpledb.file.BlockId;
 import simpledb.query.*;
 import simpledb.tx.Transaction;
@@ -47,6 +48,10 @@ public class TableScan implements UpdateScan {
    public int getInt(String fldname) {
       return rp.getInt(currentslot, fldname);
    }
+   
+   public double getDouble(String fldname) {
+      return rp.getDouble(currentslot, fldname);
+   }
 
    public String getString(String fldname) {
       return rp.getString(currentslot, fldname);
@@ -55,6 +60,9 @@ public class TableScan implements UpdateScan {
    public Constant getVal(String fldname) {
       if (layout.schema().type(fldname) == INTEGER)
          return new Constant(getInt(fldname));
+      
+      else if (layout.schema().type(fldname) == DOUBLE)
+    	  return new Constant(getDouble(fldname));
       else
          return new Constant(getString(fldname));
    }
@@ -74,6 +82,10 @@ public class TableScan implements UpdateScan {
       rp.setInt(currentslot, fldname, val);
    }
    
+   public void setDouble(String fldname, double val) {
+	   rp.setDouble(currentslot, fldname, val);
+   }
+   
    public void setString(String fldname, String val) {
       rp.setString(currentslot, fldname, val);
    }
@@ -81,8 +93,12 @@ public class TableScan implements UpdateScan {
    public void setVal(String fldname, Constant val) {
       if (layout.schema().type(fldname) == INTEGER)
          setInt(fldname, val.asInt());
-      else
-         setString(fldname, val.asString());
+      else if (layout.schema().type(fldname) == DOUBLE) {
+    	  setDouble(fldname, val.asDouble());
+      }
+      else {
+    	  setString(fldname, val.asString());  
+      }
    }
 
    public void insert() {

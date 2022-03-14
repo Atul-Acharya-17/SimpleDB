@@ -62,11 +62,11 @@ public class MergeJoinScan implements Scan {
     */
    public boolean next() {
       boolean hasmore2 = s2.next();
-      if (hasmore2 && s2.getVal(fldname2).equals(joinval))
+      if (joinval != null && hasmore2 && s2.getVal(fldname2).equals(joinval))
          return true;
       
       boolean hasmore1 = s1.next();
-      if (hasmore1 && s1.getVal(fldname1).equals(joinval)) {
+      if (joinval != null && hasmore1 && s1.getVal(fldname1).equals(joinval)) {
          s2.restorePosition();
          return true;
       }
@@ -112,6 +112,13 @@ public class MergeJoinScan implements Scan {
       else
          return s2.getString(fldname);
    }
+   
+   public double getDouble(String fldname) {
+   if (s1.hasField(fldname))
+       return s1.getDouble(fldname);
+    else
+       return s2.getDouble(fldname);
+ }
    
    /** 
     * Return the value of the specified field.

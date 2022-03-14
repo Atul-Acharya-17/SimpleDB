@@ -31,6 +31,11 @@ public class RecordPage {
       int fldpos = offset(slot) + layout.offset(fldname);
       return tx.getInt(blk, fldpos);
    }
+   
+   public double getDouble(int slot, String fldname) {
+      int fldpos = offset(slot) + layout.offset(fldname);
+      return tx.getDouble(blk, fldpos);
+   }
 
    /**
     * Return the string value stored for the
@@ -52,6 +57,11 @@ public class RecordPage {
    public void setInt(int slot, String fldname, int val) {
       int fldpos = offset(slot) + layout.offset(fldname);
       tx.setInt(blk, fldpos, val, true);
+   }
+   
+   public void setDouble(int slot, String fldname, double val) {
+      int fldpos = offset(slot) + layout.offset(fldname);
+      tx.setDouble(blk, fldpos, val, true);
    }
 
    /**

@@ -78,6 +78,13 @@ public class IndexJoinScan implements Scan {
          return lhs.getInt(fldname);
    }
    
+   public double getDouble(String fldname) {
+      if (rhs.hasField(fldname))
+         return rhs.getDouble(fldname);
+      else  
+         return lhs.getDouble(fldname);
+   }
+   
    /**
     * Returns the Constant value of the specified field.
     * @see simpledb.query.Scan#getVal(java.lang.String)

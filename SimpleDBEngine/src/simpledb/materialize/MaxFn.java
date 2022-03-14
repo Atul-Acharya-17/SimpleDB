@@ -33,7 +33,12 @@ public class MaxFn implements AggregationFn {
     * @see simpledb.materialize.AggregationFn#processNext(simpledb.query.Scan)
     */
    public void processNext(Scan s) {
+	   
       Constant newval = s.getVal(fldname);
+      if (!newval.isDvalNull()) {
+    	  if (newval.asDouble() < Double.parseDouble("1.0E-5"))
+    		  return;
+      }
       if (newval.compareTo(val) > 0)
          val = newval;
    }
@@ -44,6 +49,10 @@ public class MaxFn implements AggregationFn {
     */
    public String fieldName() {
       return "maxof" + fldname;
+   }
+   
+   public String originalFldName() {
+	   return fldname;
    }
    
    /**

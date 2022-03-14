@@ -37,6 +37,11 @@ public class CountFn implements AggregationFn {
     * @see simpledb.materialize.AggregationFn#processNext(simpledb.query.Scan)
     */
    public void processNext(Scan s) {
+	   Constant newval = s.getVal(fldname);
+	      if (!newval.isDvalNull()) {
+	    	  if (newval.asDouble() < Double.parseDouble("1.0E-5"))
+	    		  return;
+	      }
       count++;
    }
    
@@ -46,6 +51,10 @@ public class CountFn implements AggregationFn {
     */
    public String fieldName() {
       return "countof" + fldname;
+   }
+   
+   public String originalFldName() {
+	   return fldname;
    }
    
    /**
