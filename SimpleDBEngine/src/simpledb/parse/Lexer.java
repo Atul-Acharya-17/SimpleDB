@@ -50,7 +50,7 @@ public class Lexer {
 //	   System.out.println("Checking double value");
 //	   System.out.println(d == Math.floor(d));
 //	   System.out.println(d);
-	   return tok.ttype == StreamTokenizer.TT_NUMBER && Double.toString(tok.nval).contains(".");
+	   return tok.ttype == StreamTokenizer.TT_NUMBER;
    }
    
    /**
@@ -147,7 +147,7 @@ public class Lexer {
    }
    
    public double eatDoubleConstant() {
-      if (!matchIntConstant())
+      if (!matchDoubleConstant())
           throw new BadSyntaxException();
        double d = (double) tok.nval;
 //       if (d == Math.floor(d)) {

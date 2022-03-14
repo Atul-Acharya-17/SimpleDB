@@ -51,7 +51,6 @@ public class Parser {
 				  aggfn += ")";
 				  lex.eatDelim(')');
 				  
-				  System.out.println(aggfn);
 				  return aggfn;
 			  }
 		  }
@@ -68,7 +67,6 @@ public class Parser {
 			  AggregationFn func = null;
 			  
 			  String fieldname = parsed[1].split("\\)")[0];
-			  System.out.println("Field: " + fieldname);
 			  
 			  if (fn.equals("count")) {
 				  func = new CountFn(fieldname);
@@ -102,7 +100,7 @@ public class Parser {
       else if (lex.matchDoubleConstant())
          return new Constant(lex.eatDoubleConstant());
       else
-    	  return new Constant(lex.eatIntConstant());
+    	  return new Constant((int)lex.eatIntConstant());
    }
    
    public Expression expression() {
@@ -154,7 +152,6 @@ public class Parser {
     	  }
       }
       
-      System.out.println(fields.get(0));
       
       lex.eatKeyword("from");
       Collection<String> tables = tableList();
@@ -218,7 +215,6 @@ public class Parser {
     	  }
       }
       
-      System.out.println("End of parser");
       return new QueryData(fields, tables, pred, sortFields, sortOrder, groupByFields, aggfn, this.distinct);
    }
    
