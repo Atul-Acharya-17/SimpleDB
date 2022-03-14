@@ -8,7 +8,7 @@ import simpledb.query.*;
  */
 public class SumFn implements AggregationFn {
    private String fldname;
-   private int total;
+   private Constant total;
    
    /**
     * Create a max aggregation function for the specified field.
@@ -24,9 +24,13 @@ public class SumFn implements AggregationFn {
     * @see simpledb.materialize.AggregationFn#processFirst(simpledb.query.Scan)
     */
    public void processFirst(Scan s) {
-	  if (!s.getVal(fldname).isIvalNull())
-		  total = s.getVal(fldname).asInt();
-	  else total = 0;
+		  if (!s.getVal(fldname).isIvalNull()) {
+			  total = new Constant(s.getInt(fldname));
+		  }
+		  
+		  else if (!s.getVal(fldname).isDvalNull()) {
+			  total = new Constant(s.getDouble(fldname));
+		  }
    }
    
    /**
@@ -35,8 +39,13 @@ public class SumFn implements AggregationFn {
     * @see simpledb.materialize.AggregationFn#processNext(simpledb.query.Scan)
     */
    public void processNext(Scan s) {
-	  if (!s.getVal(fldname).isIvalNull())
-		  total += s.getVal(fldname).asInt();
+	  if (!s.getVal(fldname).isIvalNull()) {
+		  total = new Constant(total.asInt() + s.getInt(fldname));
+	  }
+	  
+	  else if (!s.getVal(fldname).isDvalNull()) {
+		  total = new Constant(total.asDouble() + s.getDouble(fldname));
+	  }
    }
    
    /**
@@ -57,6 +66,6 @@ public class SumFn implements AggregationFn {
     * @see simpledb.materialize.AggregationFn#value()
     */
    public Constant value() {
-      return new Constant(total);
+      return total;
    }
 }

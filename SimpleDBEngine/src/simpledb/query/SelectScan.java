@@ -41,6 +41,10 @@ public class SelectScan implements UpdateScan {
 	public int getInt(String fldname) {
 		return s.getInt(fldname);
 	}
+	
+	public double getDouble(String fldname) {
+		return s.getDouble(fldname);
+	}
 
 	public String getString(String fldname) {
 		return s.getString(fldname);

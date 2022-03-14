@@ -99,8 +99,10 @@ public class Parser {
    public Constant constant() {
       if (lex.matchStringConstant())
          return new Constant(lex.eatStringConstant());
+      else if (lex.matchDoubleConstant())
+         return new Constant(lex.eatDoubleConstant());
       else
-         return new Constant(lex.eatIntConstant());
+    	  return new Constant(lex.eatIntConstant());
    }
    
    public Expression expression() {
@@ -132,7 +134,6 @@ public class Parser {
 	  this.distinct = false;
       lex.eatKeyword("select");
       
-      boolean distinct = false;
       if (lex.matchKeyword("distinct")) {
     	  lex.eatKeyword("distinct");
     	  this.distinct = true;
@@ -362,6 +363,11 @@ public class Parser {
       if (lex.matchKeyword("int")) {
          lex.eatKeyword("int");
          schema.addIntField(fldname);
+      }
+      
+      else if (lex.matchKeyword("double")) {
+          lex.eatKeyword("double");
+          schema.addDoubleField(fldname);
       }
       else {
          lex.eatKeyword("varchar");

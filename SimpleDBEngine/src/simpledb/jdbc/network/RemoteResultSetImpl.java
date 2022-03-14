@@ -60,9 +60,20 @@ class RemoteResultSetImpl extends UnicastRemoteObject implements RemoteResultSet
          throw e;
       }
    }
+   
+   public double getDouble(String fldname) throws RemoteException {
+		try {
+	      fldname = fldname.toLowerCase(); // to ensure case-insensitivity
+	      return s.getDouble(fldname);
+      }
+      catch(RuntimeException e) {
+         rconn.rollback();
+         throw e;
+      }
+   }
 
    /**
-    * Returns the integer value of the specified field,
+    * Returns the string value of the specified field,
     * by returning the corresponding value on the saved scan.
     * @see simpledb.jdbc.network.RemoteResultSet#getInt(java.lang.String)
     */

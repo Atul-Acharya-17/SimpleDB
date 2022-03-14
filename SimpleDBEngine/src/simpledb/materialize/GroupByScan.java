@@ -105,6 +105,10 @@ public class GroupByScan implements Scan {
       return getVal(fldname).asInt();
    }
    
+   public double getDouble(String fldname) {
+	      return getVal(fldname).asDouble();
+	   }
+   
    /**
     * Get the string value of the specified field.
     * If the field is a group field, then its value can

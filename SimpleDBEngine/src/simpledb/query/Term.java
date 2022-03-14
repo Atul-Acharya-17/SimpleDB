@@ -48,6 +48,7 @@ public class Term {
    public boolean isSatisfied(Scan s) {
       Constant lhsval = lhs.evaluate(s);
       Constant rhsval = rhs.evaluate(s);
+      
       int result = lhsval.compareTo(rhsval);
       if (this.operator.equals("=")) {
     	  return result == 0;

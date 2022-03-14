@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.util.Scanner;
 import simpledb.jdbc.embedded.EmbeddedDriver;
 import simpledb.jdbc.network.NetworkDriver;
@@ -39,8 +40,11 @@ public class SimpleIJ {
 
          // print header
          for(int i=1; i<=numcols; i++) {
+        	int fldtype = md.getColumnType(i);
             String fldname = md.getColumnName(i);
             int width = md.getColumnDisplaySize(i);
+            if (fldtype == Types.DOUBLE)
+            	width += 3;
             totalwidth += width;
             String fmt = "%" + width + "s";
             System.out.format(fmt, fldname);
@@ -59,6 +63,11 @@ public class SimpleIJ {
                if (fldtype == Types.INTEGER) {
                   int ival = rs.getInt(fldname);
                   System.out.format(fmt + "d", ival);
+               }
+               else if (fldtype == Types.DOUBLE) {
+            	   fmt = "%" + (3+md.getColumnDisplaySize(i));
+            	   double dval = rs.getDouble(fldname);
+            	   System.out.format(fmt + ".2f", dval);
                }
                else {
                   String sval = rs.getString(fldname);

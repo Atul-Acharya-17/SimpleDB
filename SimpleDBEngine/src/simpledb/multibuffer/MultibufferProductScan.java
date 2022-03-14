@@ -88,6 +88,11 @@ public class MultibufferProductScan implements Scan {
       return prodscan.getInt(fldname);
    }
    
+   public double getDouble(String fldname) {
+   	// TODO Auto-generated method stub
+   	return prodscan.getDouble(fldname);
+   }
+   
    /** 
     * Returns the string value of the specified field.
     * The value is obtained from whichever scan

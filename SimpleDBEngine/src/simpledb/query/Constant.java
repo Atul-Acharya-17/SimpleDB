@@ -7,17 +7,28 @@ package simpledb.query;
 public class Constant implements Comparable<Constant> {
    private Integer ival = null;
    private String  sval = null;
+   private Double dval = null;
    
    public Constant(Integer ival) {
       this.ival = ival;
+      //this.fval = new Double(ival.intValue());
    }
    
    public Constant(String sval) {
       this.sval = sval;
    }
    
+   public Constant(Double dval) {
+	   this.dval = dval;
+	   //this.ival = new Integer(fval.intValue());
+   }
+   
    public int asInt() {
       return ival;
+   }
+   
+   public double asDouble() {
+	   return dval;
    }
    
    public String asString() {
@@ -26,11 +37,36 @@ public class Constant implements Comparable<Constant> {
    
    public boolean equals(Object obj) {
       Constant c = (Constant) obj;
-      return (ival != null) ? ival.equals(c.ival) : sval.equals(c.sval);
+      
+      if (ival != null && c.dval!=null) {
+    	  return (double)ival == c.dval;
+      }
+      else if (dval != null && c.ival != null) {
+    	  return dval == (double)c.ival;
+      }
+      
+      return (ival != null) ? ival.equals(c.ival) : (dval != null) ? dval.equals(c.dval) : sval.equals(c.sval);
    }
    
    public int compareTo(Constant c) {
-      return (ival != null) ? ival.compareTo(c.ival) : sval.compareTo(c.sval);
+      if (ival != null && c.dval!=null) {
+    	  if ((double)ival == c.dval)
+    		  return 0;
+    	  else if ((double)ival < c.dval)
+    		  return -1;
+    	  else if ((double)ival > c.dval)
+    		  return 1;
+      }
+      else if (dval != null && c.ival != null) {
+    	  if (dval == (double)c.ival)
+    		  return 0;
+    	  else if (dval < (double)c.ival)
+    		  return -1;
+    	  else if (dval > (double)c.ival)
+    		  return 1;
+      } 
+	   
+      return (ival != null) ? ival.compareTo(c.ival) : (dval != null) ? dval.compareTo(c.dval) : sval.compareTo(c.sval);
    }
    
    public int hashCode() {
@@ -43,5 +79,9 @@ public class Constant implements Comparable<Constant> {
    
    public boolean isIvalNull() {
 	   return ival == null;
+   }
+   
+   public boolean isDvalNull() {
+	   return dval == null;
    }
 }

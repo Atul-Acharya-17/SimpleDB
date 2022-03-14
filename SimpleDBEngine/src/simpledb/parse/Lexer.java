@@ -44,6 +44,14 @@ public class Lexer {
       return tok.ttype == StreamTokenizer.TT_NUMBER;
    }
    
+   public boolean matchDoubleConstant() {
+	   double d = tok.nval;
+	   System.out.println("Checking double value");
+	   System.out.println(d == Math.floor(d));
+	   System.out.println(d);
+	   return tok.ttype == StreamTokenizer.TT_NUMBER && !(d == Math.floor(d));
+   }
+   
    /**
     * Returns true if the current token is a string.
     * @return true if the current token is a string
@@ -135,6 +143,17 @@ public class Lexer {
       int i = (int) tok.nval;
       nextToken();
       return i;
+   }
+   
+   public double eatDoubleConstant() {
+      if (!matchIntConstant())
+          throw new BadSyntaxException();
+       double d = (double) tok.nval;
+       if (d == Math.floor(d)) {
+    	   throw new BadSyntaxException();
+       }
+       nextToken();
+       return d;
    }
    
    /**

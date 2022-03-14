@@ -9,7 +9,8 @@ import simpledb.query.*;
 public class AvgFn implements AggregationFn {
    private String fldname;
    private int count;
-   private double total;
+   private Constant total;
+   private Constant avg;
    
    /**
     * Create a count aggregation function for the specified field.
@@ -29,10 +30,16 @@ public class AvgFn implements AggregationFn {
     */
    public void processFirst(Scan s) {
       count = 1;
-      total = 0;
       
-      if (!s.getVal(fldname).isIvalNull())
-    	  total += s.getVal(fldname).asInt();
+	  if (!s.getVal(fldname).isIvalNull()) {
+		  total = new Constant(s.getInt(fldname));
+		  avg = new Constant((double)s.getInt(fldname)/ 1.0);
+	  }
+	  
+	  else if (!s.getVal(fldname).isDvalNull()) {
+		  total = new Constant(s.getDouble(fldname));
+		  avg = new Constant((double)total.asDouble() / 1.0);
+	  }
    }
    
    /**
@@ -43,8 +50,15 @@ public class AvgFn implements AggregationFn {
     */
    public void processNext(Scan s) {
       count++;
-      if (!s.getVal(fldname).isIvalNull())
-    	  total += s.getVal(fldname).asInt();
+	  if (!s.getVal(fldname).isIvalNull()) {
+		  total = new Constant(total.asInt() + s.getInt(fldname));
+		  avg = new Constant((double)total.asInt() / count);
+	  }
+	  
+	  else if (!s.getVal(fldname).isDvalNull()) {
+		  total = new Constant(total.asDouble() + s.getDouble(fldname));
+		  avg = new Constant(total.asDouble() / count);
+	  }
    }
    
    /**
@@ -64,6 +78,6 @@ public class AvgFn implements AggregationFn {
     * @see simpledb.materialize.AggregationFn#value()
     */
    public Constant value() {
-      return new Constant((int)(total/count));
+      return avg;
    }
 }

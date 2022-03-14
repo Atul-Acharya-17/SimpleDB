@@ -38,9 +38,19 @@ public class GroupByPlan implements Plan {
 
     	  String field = fn.originalFldName();
     	  System.out.println(p.schema().type(field));
+    	  
+    	  // ID: 12 is String type
     	  if ((fn.fieldName().contains("min") || fn.fieldName().contains("max") )
     			  && p.schema().type(field) == 12) {
     		  sch.addStringField(fn.fieldName(), p.schema().length(field));
+    	  }
+    	  
+    	  else if ((fn.fieldName().contains("avg"))) {
+    		  sch.addDoubleField(fn.fieldName());
+    	  }
+    	  // DOUBLE is 8
+    	  else if (p.schema().type(field) == 8 && !fn.fieldName().contains("count")) {
+    		  sch.addDoubleField(fn.fieldName());
     	  }
 
     	  else {

@@ -61,6 +61,13 @@ public class ProductScan implements Scan {
       else
          return s2.getInt(fldname);
    }
+   
+   public double getDouble(String fldname) {
+	      if (s1.hasField(fldname))
+	         return s1.getDouble(fldname);
+	      else
+	         return s2.getDouble(fldname);
+	   }
 
    /** 
     * Returns the string value of the specified field.

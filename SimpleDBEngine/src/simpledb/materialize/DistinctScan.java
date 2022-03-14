@@ -77,6 +77,13 @@ public class DistinctScan implements Scan{
 	          throw new RuntimeException("field " + fldname + " not found.");
 	}
 
+	public double getDouble(String fldname) {
+	      if (hasField(fldname))
+	          return s.getDouble(fldname);
+	       else
+	          throw new RuntimeException("field " + fldname + " not found.");
+	}
+	
 	@Override
 	public Constant getVal(String fldname) {
 	      if (hasField(fldname))

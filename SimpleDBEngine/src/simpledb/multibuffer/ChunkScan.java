@@ -81,6 +81,11 @@ public class ChunkScan implements Scan {
    public int getInt(String fldname) {
       return rp.getInt(currentslot, fldname);
    }
+   
+   public double getDouble(String fldname) {
+   	// TODO Auto-generated method stub
+   	return rp.getDouble(currentslot, fldname);
+   }
 
    /**
     * @see simpledb.query.Scan#getString(java.lang.String)

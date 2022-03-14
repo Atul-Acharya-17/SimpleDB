@@ -36,6 +36,8 @@ public interface Scan {
     */
    public String getString(String fldname);
    
+   public double getDouble(String fldname);
+   
    /**
     * Return the value of the specified field in the current record.
     * The value is expressed as a Constant.
