@@ -11,7 +11,6 @@ public class Constant implements Comparable<Constant> {
    
    public Constant(Integer ival) {
       this.ival = ival;
-      //this.fval = new Double(ival.intValue());
    }
    
    public Constant(String sval) {
@@ -20,7 +19,6 @@ public class Constant implements Comparable<Constant> {
    
    public Constant(Double dval) {
 	   this.dval = dval;
-	   //this.ival = new Integer(fval.intValue());
    }
    
    public int asInt() {
