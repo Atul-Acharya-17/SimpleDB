@@ -2,6 +2,7 @@ package simpledb.opt;
 
 import java.util.*;
 import simpledb.tx.Transaction;
+import simpledb.materialize.DistinctPlan;
 import simpledb.materialize.GroupByPlan;
 import simpledb.materialize.SortPlan;
 import simpledb.metadata.MetadataMgr;
@@ -36,7 +37,6 @@ public class HeuristicQueryPlanner implements QueryPlanner {
          tableplanners.add(tp);
       }
       
-      System.out.println("Step 2");
       // Step 2:  Choose the lowest-size plan to begin the join order
       Plan currentplan = getLowestSelectPlan();
       
@@ -50,8 +50,12 @@ public class HeuristicQueryPlanner implements QueryPlanner {
       }
       
       // Step 4.  Project on the field names and return
-      System.out.println("Step 4");
       currentplan = new ProjectPlan(currentplan, data.fields());
+      
+      if (data.Distinct()) {
+    	  currentplan = new DistinctPlan(tx, currentplan, data.fields());
+      }
+      
       
       if (data.aggregationFuncs().size() > 0 || data.groupByFields().size() > 0) {
     	  currentplan = new GroupByPlan(tx, currentplan, data.groupByFields(), data.aggregationFuncs());

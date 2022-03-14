@@ -55,6 +55,10 @@ public class AvgFn implements AggregationFn {
       return "avgof" + fldname;
    }
    
+   public String originalFldName() {
+	   return fldname;
+   }
+   
    /**
     * Return the current count.
     * @see simpledb.materialize.AggregationFn#value()

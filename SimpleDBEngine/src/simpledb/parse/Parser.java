@@ -17,6 +17,7 @@ import simpledb.record.*;
  */
 public class Parser {
    private Lexer lex;
+   private boolean distinct;
    
    public Parser(String s) {
       lex = new Lexer(s);
@@ -36,8 +37,14 @@ public class Parser {
 			  if (lex.matchKeyword(f)) {
 				  aggfn += f;
 				  aggfn += "(";
+				  
 				  lex.eatKeyword(f);
 				  lex.eatDelim('(');
+				  
+				  if (lex.matchKeyword("distinct")) {
+					  this.distinct = true;
+					  lex.eatKeyword("distinct");
+				  }
 				  
 				  String fieldname = lex.eatId();
 				  aggfn += fieldname;
@@ -122,8 +129,16 @@ public class Parser {
 // Methods for parsing queries
    
    public QueryData query() {
+	  this.distinct = false;
       lex.eatKeyword("select");
+      
+      boolean distinct = false;
+      if (lex.matchKeyword("distinct")) {
+    	  lex.eatKeyword("distinct");
+    	  this.distinct = true;
+      }
       List<String> fields = selectList();
+      
       
       // Get AggFns
       List<AggregationFn> aggfn = new ArrayList<AggregationFn>();
@@ -135,8 +150,6 @@ public class Parser {
 		  fields.set(i, parsedField);
     	  if (agfn != null) {
     		  aggfn.add(agfn);
-    		  // Need to be careful here
-    		  //fields.remove(f);
     	  }
       }
       
@@ -205,7 +218,7 @@ public class Parser {
       }
       
       System.out.println("End of parser");
-      return new QueryData(fields, tables, pred, sortFields, sortOrder, groupByFields, aggfn);
+      return new QueryData(fields, tables, pred, sortFields, sortOrder, groupByFields, aggfn, this.distinct);
    }
    
    private List<String> selectList() {

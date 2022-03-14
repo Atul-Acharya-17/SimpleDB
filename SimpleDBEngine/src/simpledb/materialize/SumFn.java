@@ -24,7 +24,9 @@ public class SumFn implements AggregationFn {
     * @see simpledb.materialize.AggregationFn#processFirst(simpledb.query.Scan)
     */
    public void processFirst(Scan s) {
-      total = s.getVal(fldname).asInt();
+	  if (!s.getVal(fldname).isIvalNull())
+		  total = s.getVal(fldname).asInt();
+	  else total = 0;
    }
    
    /**
@@ -33,7 +35,8 @@ public class SumFn implements AggregationFn {
     * @see simpledb.materialize.AggregationFn#processNext(simpledb.query.Scan)
     */
    public void processNext(Scan s) {
-      total += s.getVal(fldname).asInt();
+	  if (!s.getVal(fldname).isIvalNull())
+		  total += s.getVal(fldname).asInt();
    }
    
    /**
@@ -43,6 +46,11 @@ public class SumFn implements AggregationFn {
    public String fieldName() {
       return "sumof" + fldname;
    }
+   
+   public String originalFldName() {
+	   return fldname;
+   }
+   
    
    /**
     * Return the current maximum.
