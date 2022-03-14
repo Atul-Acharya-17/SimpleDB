@@ -33,12 +33,12 @@ public class AvgFn implements AggregationFn {
       
 	  if (!s.getVal(fldname).isIvalNull()) {
 		  total = new Constant(s.getInt(fldname));
-		  avg = new Constant((double)s.getInt(fldname)/ 1.0);
+		  avg = new Constant((double)s.getInt(fldname)/ count);
 	  }
 	  
 	  else if (!s.getVal(fldname).isDvalNull()) {
 		  total = new Constant(s.getDouble(fldname));
-		  avg = new Constant((double)total.asDouble() / 1.0);
+		  avg = new Constant((double)total.asDouble() / count);
 	  }
    }
    
@@ -49,6 +49,12 @@ public class AvgFn implements AggregationFn {
     * @see simpledb.materialize.AggregationFn#processNext(simpledb.query.Scan)
     */
    public void processNext(Scan s) {
+	   Constant newval = s.getVal(fldname);
+	      if (!newval.isDvalNull()) {
+	    	  if (newval.asDouble() < Double.parseDouble("1.0E-5"))
+	    		  return;
+	      }
+	   
       count++;
 	  if (!s.getVal(fldname).isIvalNull()) {
 		  total = new Constant(total.asInt() + s.getInt(fldname));

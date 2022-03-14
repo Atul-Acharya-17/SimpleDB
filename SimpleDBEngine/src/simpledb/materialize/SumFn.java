@@ -39,6 +39,11 @@ public class SumFn implements AggregationFn {
     * @see simpledb.materialize.AggregationFn#processNext(simpledb.query.Scan)
     */
    public void processNext(Scan s) {
+	   Constant newval = s.getVal(fldname);
+	      if (!newval.isDvalNull()) {
+	    	  if (newval.asDouble() < Double.parseDouble("1.0E-5"))
+	    		  return;
+	      }
 	  if (!s.getVal(fldname).isIvalNull()) {
 		  total = new Constant(total.asInt() + s.getInt(fldname));
 	  }

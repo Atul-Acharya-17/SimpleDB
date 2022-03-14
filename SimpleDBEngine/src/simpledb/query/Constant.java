@@ -22,6 +22,8 @@ public class Constant implements Comparable<Constant> {
    }
    
    public int asInt() {
+	  if (ival == null)
+		  return dval.intValue();
       return ival;
    }
    

@@ -91,9 +91,6 @@ public class TableScan implements UpdateScan {
    }
 
    public void setVal(String fldname, Constant val) {
-	  System.out.println("Dirty Work");
-	  System.out.println(fldname);
-	  System.out.println(layout.schema().type(fldname));
       if (layout.schema().type(fldname) == INTEGER)
          setInt(fldname, val.asInt());
       else if (layout.schema().type(fldname) == DOUBLE) {

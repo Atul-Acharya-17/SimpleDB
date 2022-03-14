@@ -25,7 +25,7 @@ public class MinFn implements AggregationFn {
     */
    public void processFirst(Scan s) {
       val = s.getVal(fldname);
-      System.out.println(val);
+      System.out.println("Val " + val.asDouble());
    }
    
    /**
@@ -35,10 +35,15 @@ public class MinFn implements AggregationFn {
     */
    public void processNext(Scan s) {
       Constant newval = s.getVal(fldname);
+      
+      if (!newval.isDvalNull()) {
+    	  if (newval.asDouble() < Double.parseDouble("1.0E-5"))
+    		  return;
+      }
       if (newval.compareTo(val) < 0) {
-    	 System.out.println(newval);
          val = newval;
       }
+      
    }
    
    /**
