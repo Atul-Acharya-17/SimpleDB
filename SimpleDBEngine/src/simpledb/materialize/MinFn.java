@@ -25,7 +25,6 @@ public class MinFn implements AggregationFn {
     */
    public void processFirst(Scan s) {
       val = s.getVal(fldname);
-      System.out.println("Val " + val.asDouble());
    }
    
    /**
